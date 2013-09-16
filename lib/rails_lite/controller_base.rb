@@ -9,7 +9,7 @@ class ControllerBase
   def initialize(req, res, route_params = {})
     @request = req
     @response = res
-    @params = Params.new(req, {})
+    @params = Params.new(req, route_params)
   end
 
   def session
@@ -51,5 +51,8 @@ class ControllerBase
   end
 
   def invoke_action(name)
+    # render unless already_rendered?
+    self.send(name)
+    render(name) unless already_rendered?
   end
 end
