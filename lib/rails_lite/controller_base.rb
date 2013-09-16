@@ -9,6 +9,7 @@ class ControllerBase
   def initialize(req, res, route_params = {})
     @request = req
     @response = res
+    @params = Params.new(req, {})
   end
 
   def session
