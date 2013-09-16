@@ -12,6 +12,8 @@ class ControllerBase
   end
 
   def session
+    @session ||= Session.new(@request)
+
   end
 
   def already_rendered?
@@ -23,6 +25,7 @@ class ControllerBase
     #rescue Exception #WEBrick::HTTPStatus::Redirect # do this elsewhere
 
     # @response.body = "<HTML><A HREF=\"#{url.to_s}\">#{url.to_s}</A>.</HTML>\n"
+    session.store_session(@response)
     @response.header["location"] = url.to_s
     @response.status = 302
 
@@ -31,16 +34,16 @@ class ControllerBase
 
   def render_content(content, type)
     raise if @already_built_response
+    session.store_session(@response)
     @response.content_type = type
     @response.body = content
     @already_built_response = true
   end
 
   def render(template_name)
-    f = File.read("views/my_controller/#{template_name}.html.erb") # don't hard code this ew
-    #last_line = "\n<% binding %>" # what.
-    #f << last_line
-    #template = ERB.new(f)
+    controller_name = self.class.to_s.underscore
+
+    f = File.read("views/#{controller_name}/#{template_name}.html.erb")
     controller_bind = binding
     template = ERB.new(f).result(controller_bind)
     render_content(template, "text/html")
