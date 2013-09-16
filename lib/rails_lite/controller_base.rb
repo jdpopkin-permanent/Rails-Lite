@@ -14,7 +14,6 @@ class ControllerBase
 
   def session
     @session ||= Session.new(@request)
-
   end
 
   def already_rendered?

@@ -4,7 +4,6 @@ require 'webrick'
 class Session
   def initialize(req)
     req.cookies.each do |cookie|
-      # parsed_cookie = JSON.parse(cookie)
       next unless cookie.name == "_rails_lite_app"
       @cookie_hash = JSON.parse(cookie.value)
     end
@@ -25,6 +24,10 @@ class Session
     name = "_rails_lite_app"
 
     new_cookie = WEBrick::Cookie.new(name, serialized_hash)
-    res.cookies << new_cookie # note: doesn't overwrite matching cookie
+    res.cookies.each_index do |i|
+      cookie = res.cookies[i]
+      next unless cookie.name == "_rails_lite_app"
+      res.cookies[i] = new_cookie
+    end
   end
 end
