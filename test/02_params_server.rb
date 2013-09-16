@@ -39,3 +39,8 @@ server.mount_proc '/' do |req, res|
 end
 
 server.start
+
+=begin
+To test:
+http://localhost:8080/?cat[head][hair][color]=black&cat[name]=joe&cat[head][hair][texture]=curly&cat[tail][hair][color]=blue
+=end

@@ -24,10 +24,18 @@ class Session
     name = "_rails_lite_app"
 
     new_cookie = WEBrick::Cookie.new(name, serialized_hash)
+    found = false
+
     res.cookies.each_index do |i|
       cookie = res.cookies[i]
       next unless cookie.name == "_rails_lite_app"
+
+      found = true
       res.cookies[i] = new_cookie
+    end
+
+    unless found
+      res.cookies << new_cookie
     end
   end
 end

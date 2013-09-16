@@ -23,9 +23,16 @@ class MyController < ControllerBase
     # render :show
 
     # after you have sessions going, uncomment:
-   session["count"] ||= 0
-   session["count"] += 1
-   render :counting_show
+    session["count"] ||= 0
+    session["count"] += 1
+
+    # tests for flash
+    # flash.set_now("count", 0) if flash.flash_hash[:now]["count"].nil?
+    # flash["count"] ||= 0
+    # flash["count"] += 100
+    # flash.store_flash(nil)
+    render :counting_show
+
   end
 
 

@@ -1,10 +1,10 @@
 require 'erb'
 require_relative 'params'
 require_relative 'session'
+require_relative 'flash'
 
 class ControllerBase
   attr_reader :params
-  # rescue_from WEBrick::HTTPStatus::Redirect, with: send_to
 
   def initialize(req, res, route_params = {})
     @request = req
@@ -16,16 +16,19 @@ class ControllerBase
     @session ||= Session.new(@request)
   end
 
+  def flash
+    @flash ||= Flash.new(@request)
+  end
+
   def already_rendered?
     @already_built_response
   end
 
   def redirect_to(url)
-    #@response.set_redirect(302, url)
-    #rescue Exception #WEBrick::HTTPStatus::Redirect # do this elsewhere
+    raise if @already_built_response
 
-    # @response.body = "<HTML><A HREF=\"#{url.to_s}\">#{url.to_s}</A>.</HTML>\n"
     session.store_session(@response)
+    flash.store_flash(@response)
     @response.header["location"] = url.to_s
     @response.status = 302
 
@@ -34,7 +37,9 @@ class ControllerBase
 
   def render_content(content, type)
     raise if @already_built_response
+
     session.store_session(@response)
+    flash.store_flash(@response)
     @response.content_type = type
     @response.body = content
     @already_built_response = true
